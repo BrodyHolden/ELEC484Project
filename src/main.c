@@ -22,6 +22,7 @@ uint16_t ADCvalue;
 
 uint16_t inputsamples [6500];
 uint16_t i;
+uint16_t o;
 
 int main(void)
 {

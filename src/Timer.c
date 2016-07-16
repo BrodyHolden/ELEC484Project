@@ -7,18 +7,6 @@
 
 #include "Timer.h"
 
-void TIM4_IRQHandler(void)
-{
-	ticks ++;
-	if(TIM_GetITStatus(TIM4, TIM_IT_CC1) != RESET)
-	{
-		TIM_ClearITPendingBit(TIM4, TIM_IT_CC1);
-
-		GPIO_PinToggle(GPIOD, LED6_PIN);
-	}
-	if(ticks > 1) ticks = 0;
-}
-
 
 void TIM4_Config(void)
 {
@@ -43,7 +31,7 @@ void TIM4_Config(void)
   prescalervalue = (uint16_t) ((SystemCoreClock ) / 550000) - 1;
 
   /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 65535;
+  TIM_TimeBaseStructure.TIM_Period = 65049; //-441??
   TIM_TimeBaseStructure.TIM_Prescaler = prescalervalue;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;

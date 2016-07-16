@@ -23,11 +23,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
+#include "stm32f4xx.h"
 #include "GPIOPins.h"
 #include "main.h"
 
 extern uint16_t inputsamples [6500];
 extern uint16_t i;
+extern uint16_t o;
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{
@@ -189,14 +191,36 @@ void ADC_IRQHandler(void)
 
 		if(i > 6499) i = 0;
 	}
-	//ADC_SoftwareStartConv(ADC3);
-	ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
+
 
 }
 
 void SPI3_IRQHandler (void)
 {
 
+}
+
+void TIM4_IRQHandler(void)
+{
+	ticks ++;
+	if(TIM_GetITStatus(TIM4, TIM_IT_CC1) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM4, TIM_IT_CC1);
+
+		GPIO_PinToggle(GPIOD, LED6_PIN);
+
+		//ADC_SoftwareStartConv(ADC3);
+		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
+
+		if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == RESET)
+		{
+			I2S3ext->DR = inputsamples[o];
+			o++;
+
+			if(o > 6499) o = 0;
+		}
+	}
+	if(ticks > 1) ticks = 0;
 }
 
 /**

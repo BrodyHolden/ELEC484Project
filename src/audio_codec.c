@@ -64,7 +64,7 @@ void codecI2SInit (void)
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
 	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Enable;
-	I2S_Init(SPI3, &I2S_InitStructure);
+	I2S_Init(I2S3ext, &I2S_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = SPI3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -72,9 +72,9 @@ void codecI2SInit (void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	SPI_I2S_ITConfig(SPI3, SPI_I2S_IT_TXE, ENABLE);
+	SPI_I2S_ITConfig(I2S3ext, SPI_I2S_IT_TXE, ENABLE);
 
-	I2S_Cmd(SPI3, ENABLE);
+	I2S_Cmd(I2S3ext, ENABLE);
 }
 
 void codecI2CCommandBusInit (void)
