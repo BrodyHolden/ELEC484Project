@@ -188,8 +188,10 @@ void ADC_IRQHandler(void)
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		i++;
-
 		if(i > 6499) i = 0;
+
+		GPIO_PinToggle(GPIOD, LED6_PIN);
+
 	}
 
 
@@ -207,12 +209,11 @@ void TIM4_IRQHandler(void)
 	{
 		TIM_ClearITPendingBit(TIM4, TIM_IT_CC1);
 
-		GPIO_PinToggle(GPIOD, LED6_PIN);
-
 		//ADC_SoftwareStartConv(ADC3);
 		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 
-		if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == RESET)
+
+		if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
 		{
 			I2S3ext->DR = inputsamples[o];
 			o++;

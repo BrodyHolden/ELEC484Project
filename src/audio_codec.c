@@ -58,14 +58,14 @@ void codecI2SInit (void)
 
 	// CODEC_I2S peripheral configuration
 	SPI_I2S_DeInit(SPI3);
-	I2S_InitStructure.I2S_AudioFreq = 44100;
+	I2S_InitStructure.I2S_AudioFreq = 48000;
 	I2S_InitStructure.I2S_Standard = I2S_STANDARD_PHILLIPS;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
 	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Enable;
 	I2S_Init(I2S3ext, &I2S_InitStructure);
-
+/*
 	NVIC_InitStructure.NVIC_IRQChannel = SPI3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority =0;
@@ -73,7 +73,7 @@ void codecI2SInit (void)
 	NVIC_Init(&NVIC_InitStructure);
 
 	SPI_I2S_ITConfig(I2S3ext, SPI_I2S_IT_TXE, ENABLE);
-
+*/
 	I2S_Cmd(I2S3ext, ENABLE);
 }
 
