@@ -29,7 +29,8 @@
 
 extern uint16_t inputsamples [6500];
 extern uint16_t i;
-extern uint16_t o;
+extern uint32_t o;
+extern const uint16_t AUDIO_SAMPLE[];
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{
@@ -189,9 +190,6 @@ void ADC_IRQHandler(void)
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		i++;
 		if(i > 6499) i = 0;
-
-		GPIO_PinToggle(GPIOD, LED6_PIN);
-
 	}
 
 
@@ -199,7 +197,20 @@ void ADC_IRQHandler(void)
 
 void SPI3_IRQHandler (void)
 {
+	if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
+	{
+		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
+		{
+			I2S3ext->DR = AUDIO_SAMPLE[o];
+		}
+		else
+		{
+			I2S3ext->DR = AUDIO_SAMPLE[o];
+			o++;
+		}
 
+		if(o > 500000) o = 0;
+	}
 }
 
 void TIM4_IRQHandler(void)
@@ -212,14 +223,12 @@ void TIM4_IRQHandler(void)
 		//ADC_SoftwareStartConv(ADC3);
 		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 
+		DAC->DHR12R1 = AUDIO_SAMPLE[o];
+		o++;
+		if(o > 500000) o = 0;
 
-		if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
-		{
-			I2S3ext->DR = inputsamples[o];
-			o++;
+		GPIO_PinToggle(GPIOD, LED6_PIN);
 
-			if(o > 6499) o = 0;
-		}
 	}
 	if(ticks > 1) ticks = 0;
 }

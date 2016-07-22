@@ -22,13 +22,14 @@ uint16_t ADCvalue;
 
 uint16_t inputsamples [6500];
 uint16_t i;
-uint16_t o;
+uint32_t o;
 
 int main(void)
 {
 	UserButtonPressed = 0;
 	ticks = 0;
 	i = 0;
+	o = 0;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -46,7 +47,14 @@ int main(void)
 
 	ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 
-	codecInit();
+	//codecInit();
+
+	dacInit();
+
+//	if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
+//	{
+//		I2S3ext->DR = inputsamples[o];
+//	}
 
 	while(1)
 	{

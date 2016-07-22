@@ -22,6 +22,7 @@
 #include "stm32f4xx_dma.h"
 #include "adc.h"
 #include "audio_codec.h"
+#include "dac.h"
 
 uint8_t UserButtonPressed;
 

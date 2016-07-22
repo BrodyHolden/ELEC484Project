@@ -35,7 +35,7 @@ void AltFuncPortPinInit (GPIO_TypeDef * portn, uint32_t pin, uint32_t clk)
 	  GPIO_InitStructure.GPIO_Pin = pin;
 	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	  GPIO_Init(portn, &GPIO_InitStructure);
 
