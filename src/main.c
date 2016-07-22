@@ -47,14 +47,14 @@ int main(void)
 
 	ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 
-	//codecInit();
+	codecInit();
 
-	dacInit();
+//	dacInit();
 
-//	if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
-//	{
-//		I2S3ext->DR = inputsamples[o];
-//	}
+	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
+	{
+		SPI3->DR = inputsamples[o];
+	}
 
 	while(1)
 	{

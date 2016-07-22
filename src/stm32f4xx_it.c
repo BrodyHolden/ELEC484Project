@@ -197,15 +197,15 @@ void ADC_IRQHandler(void)
 
 void SPI3_IRQHandler (void)
 {
-	if((I2S3ext->SR && SPI_I2S_FLAG_TXE) == SET)
+	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
+		if((SPI3->SR && I2S_FLAG_CHSIDE) == SET)
 		{
-			I2S3ext->DR = AUDIO_SAMPLE[o];
+			SPI3->DR = AUDIO_SAMPLE[o];
 		}
 		else
 		{
-			I2S3ext->DR = AUDIO_SAMPLE[o];
+			SPI3->DR = AUDIO_SAMPLE[o];
 			o++;
 		}
 
@@ -223,7 +223,7 @@ void TIM4_IRQHandler(void)
 		//ADC_SoftwareStartConv(ADC3);
 		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 
-		DAC->DHR12R1 = AUDIO_SAMPLE[o];
+		//DAC->DHR12R1 = AUDIO_SAMPLE[o];
 		o++;
 		if(o > 500000) o = 0;
 

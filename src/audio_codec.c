@@ -7,105 +7,14 @@
 
 #include "audio_codec.h"
 
-//static AudioCallbackFunction *CallbackFunction;
-static void *CallbackContext;
-static int16_t * volatile NextBufferSamples;
-static volatile int NextBufferLength;
-static volatile int BufferNumber;
-//static volatile bool DMARunning;
-
 void codecInit (void)
 {
 
-//	codecGPIOInit();
+	codecGPIOInit();
 
-//	codecI2SInit();
+	codecI2SInit();
 
 	codecI2CCommandBusInit();
-
-//	Audio44100HzSettings 271,2,6,0
-	int plln = 271;
-	int pllr = 2;
-	int i2sdiv = 6;
-	int i2sodd = 0;
-
-	GPIO_InitTypeDef  GPIO_InitStructure;
-	NVIC_InitTypeDef   NVIC_InitStructure;
-	I2S_InitTypeDef I2S_InitStructure;		//Struct for I2S init
-
-	OutputPortPinInit(GPIOD, GPIO_Pin_4, RCC_AHB1Periph_GPIOD);
-
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);	// Needed for Audio chip
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-	// Enable GPIO port A4 as an analog output
-	GPIO_StructInit( &GPIO_InitStructure );
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_SPI3);
-
-	// Configure C7,C10,C12 from I2S (SPI3)
-	GPIO_StructInit( &GPIO_InitStructure );
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_10 | GPIO_Pin_12;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_SPI3);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource12, GPIO_AF_SPI3);
-
-	// Disable I2S.
-//	SPI3 ->I2SCFGR = 0;
-	SPI_I2S_DeInit(SPI3);
-	// I2S clock configuration
-	// Disable PLLI2S and wait until is off
-	RCC->CR &= ~RCC_CR_PLLI2SON;
-	while ( RCC -> CR & RCC_CR_PLLI2SON );
-
-	RCC ->CFGR &= ~RCC_CFGR_I2SSRC; // PLLI2S clock used as I2S clock source.
-	RCC ->PLLI2SCFGR = (pllr << 28) | (plln << 6);
-
-
-	I2S_InitStructure.I2S_AudioFreq = 44100;
-	I2S_InitStructure.I2S_Standard = I2S_STANDARD_PHILLIPS;
-	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
-	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
-	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
-	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Enable;
-	I2S_Init(I2S3ext, &I2S_InitStructure);
-
-	// Configure I2S.
-	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
-
-
-	// Configure I2S as Master receiver, Phillips mode, 16-bit values, clock polarity low, enable.
-	//SPI3 ->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1 | SPI_I2SCFGR_I2SCFG_0
-	//		| SPI_I2SCFGR_I2SE;
-
-	// WARNING: In MASTER TRANSMITTER MODE, the STM32F407 will only generate the master clock signal when data is being
-	// actively transmitted.  At all other times, the Master Clock (MCLK) signal will be turned off.
-	// If you are using the CS43L22 chip, which uses the MCLK to run a charge pump for its analog components during
-	// ANALOG PASSTHRU mode this might have unintended consequences.
-
-	// Enable PLLI2S and wait until it is ready.
-	RCC ->CR |= RCC_CR_PLLI2SON;
-	while (!(RCC ->CR & RCC_CR_PLLI2SRDY ));
-
-	NVIC_InitStructure.NVIC_IRQChannel = SPI3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority =0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-	SPI_I2S_ITConfig(I2S3ext, SPI_I2S_IT_TXE, ENABLE);
-
-	I2S_Cmd(I2S3ext, ENABLE);
 
 	// Initialize the CS43L22 system for audio passthrough
 	// Reset the CS43L22 chip.
@@ -121,13 +30,11 @@ void codecInit (void)
 	WriteRegister(0x32, 0x00);
 	WriteRegister(0x00, 0x00);
 
-	WriteRegister(0x02, 0x01);
+	WriteRegister(0x02, 0x01);			//Power down
 	WriteRegister(0x04, 0xaf);			// HP always on, Speakers always off
-	WriteRegister(0x08, 0x01);			// Select AINA1 as input
-	WriteRegister(0x09, 0x01);			// Select AINB1 as input
-	WriteRegister(0x0e, 0xc0);			// Analog passthrough enabled.
-	WriteRegister(0x14, 0xe0);
-	WriteRegister(0x15, 0xe0);
+	WriteRegister(0x05, 0x81);			// Clock config: Auto detect
+	WriteRegister(0x06, 0x04);			// Set Slave mode and audio standard
+	WriteRegister(0x0d, 0x60);			// Set headphone volume
 	WriteRegister(0x02, 0x9e);			// Activate the chip
 
 }
@@ -188,62 +95,100 @@ void I2C_stop(I2C_TypeDef* I2Cx){
 
 void codecGPIOInit (void)
 {
-	//Enable GPIO for codec reset pin
-//	OutputPortPinInit(GPIOD, GPIO_Pin_4, RCC_AHB1Periph_GPIOD);
+	GPIO_InitTypeDef  GPIO_InitStructure;
 
-	//Enable GPIO for codec I2C commands
-	AltFuncPortPinInit(GPIOB, GPIO_Pin_6, RCC_AHB1Periph_GPIOB);	//SCL
-	AltFuncPortPinInit(GPIOB, GPIO_Pin_9, RCC_AHB1Periph_GPIOB);	//SDA
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
-	// Connect pins to I2C peripheral
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_I2C1);
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_I2C1);
+	// Configure the I2S Reset pin
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-	//Enable GPIO for I2S Data pins.
-//	AltFuncPortPinInit(GPIOC, GPIO_Pin_7, RCC_AHB1Periph_GPIOC);	//MCK
-//	AltFuncPortPinInit(GPIOC, GPIO_Pin_10, RCC_AHB1Periph_GPIOC);	//SCK
-//	AltFuncPortPinInit(GPIOC, GPIO_Pin_12, RCC_AHB1Periph_GPIOC);	//SD
-//	AltFuncPortPinInit(GPIOA, GPIO_Pin_4, RCC_AHB1Periph_GPIOA);	//WS
+	// I2S WS pin on portA4
+	GPIO_StructInit( &GPIO_InitStructure );
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_SPI3);
 
-	// Connect pins to I2S peripheral
-//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_SPI3);
-//	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
-//	GPIO_PinAFConfig(GPIOC, GPIO_PinSource12, GPIO_AF_SPI3);
-
-	// Connect pins to I2S peripheral
-//	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_SPI3);
+	// Configure C7,C10,C12 from I2S (SPI3)
+	GPIO_StructInit( &GPIO_InitStructure );
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_10 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
 void codecI2SInit (void)
 {
+	//	Audio44100HzSettings 271,2,6,0
+	int plln = 271;
+	int pllr = 2;
+	int i2sdiv = 6;
+	int i2sodd = 0;
+
+	NVIC_InitTypeDef   NVIC_InitStructure;
 	I2S_InitTypeDef I2S_InitStructure;		//Struct for I2S init
-	NVIC_InitTypeDef   NVIC_InitStructure; 	//Struct for I2S Interrupt init
 
-	//Enable I2S periferal
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
+	//OutputPortPinInit(GPIOD, GPIO_Pin_4, RCC_AHB1Periph_GPIOD);
 
-	// Enable the GPIO_LED Clock
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);	// Needed for Audio chip
 
-	// CODEC_I2S peripheral configuration
-	SPI_I2S_DeInit(SPI3);
-	I2S_InitStructure.I2S_AudioFreq = 48000;
+	// I2S clock configuration
+	// Disable PLLI2S and wait until is off
+	RCC->CR &= ~RCC_CR_PLLI2SON;
+	while ( RCC -> CR & RCC_CR_PLLI2SON );
+
+	RCC ->CFGR &= ~RCC_CFGR_I2SSRC; // PLLI2S clock used as I2S clock source.
+	RCC ->PLLI2SCFGR = (pllr << 28) | (plln << 6);
+
+
+	I2S_InitStructure.I2S_AudioFreq = 44100;
 	I2S_InitStructure.I2S_Standard = I2S_STANDARD_PHILLIPS;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
 	I2S_InitStructure.I2S_Mode = I2S_Mode_MasterTx;
 	I2S_InitStructure.I2S_MCLKOutput = I2S_MCLKOutput_Enable;
-	I2S_Init(I2S3ext, &I2S_InitStructure);
-/*
+	I2S_Init(SPI3, &I2S_InitStructure);
+
+	// Configure I2S.
+	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
+
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_SPI3);
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource12, GPIO_AF_SPI3);
+
+	// Configure I2S as Master receiver, Phillips mode, 16-bit values, clock polarity low, enable.
+	//SPI3 ->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1 | SPI_I2SCFGR_I2SCFG_0
+	//		| SPI_I2SCFGR_I2SE;
+
+	// WARNING: In MASTER TRANSMITTER MODE, the STM32F407 will only generate the master clock signal when data is being
+	// actively transmitted.  At all other times, the Master Clock (MCLK) signal will be turned off.
+	// If you are using the CS43L22 chip, which uses the MCLK to run a charge pump for its analog components during
+	// ANALOG PASSTHRU mode this might have unintended consequences.
+
+	// Enable PLLI2S and wait until it is ready.
+	RCC ->CR |= RCC_CR_PLLI2SON;
+	while (!(RCC ->CR & RCC_CR_PLLI2SRDY ));
+
 	NVIC_InitStructure.NVIC_IRQChannel = SPI3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority =0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	SPI_I2S_ITConfig(I2S3ext, SPI_I2S_IT_TXE, ENABLE);
-*/
-	I2S_Cmd(I2S3ext, ENABLE);
+	SPI_I2S_ITConfig(SPI3, SPI_I2S_IT_TXE, ENABLE);
+
+	I2S_Cmd(SPI3, ENABLE);
 }
 
 void codecI2CCommandBusInit (void)
