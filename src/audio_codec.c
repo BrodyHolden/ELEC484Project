@@ -131,10 +131,11 @@ void codecGPIOInit (void)
 void codecI2SInit (void)
 {
 	//	Audio44100HzSettings 271,2,6,0
-	int plln = 271;
-	int pllr = 2;
-	int i2sdiv = 6;
-	int i2sodd = 0;
+	//Audio48000HzSettings 258,3,3,1
+	int plln = 258;
+	int pllr = 3;
+	int i2sdiv = 3;
+	int i2sodd = 1;
 
 	NVIC_InitTypeDef   NVIC_InitStructure;
 	I2S_InitTypeDef I2S_InitStructure;		//Struct for I2S init
@@ -152,7 +153,7 @@ void codecI2SInit (void)
 	RCC ->PLLI2SCFGR = (pllr << 28) | (plln << 6);
 
 
-	I2S_InitStructure.I2S_AudioFreq = 44100;
+	//I2S_InitStructure.I2S_AudioFreq = 48000;
 	I2S_InitStructure.I2S_Standard = I2S_STANDARD_PHILLIPS;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;
@@ -161,7 +162,7 @@ void codecI2SInit (void)
 	I2S_Init(SPI3, &I2S_InitStructure);
 
 	// Configure I2S.
-	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
+//	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
 
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_SPI3);
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
