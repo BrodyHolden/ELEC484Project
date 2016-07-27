@@ -20,7 +20,7 @@ uint8_t ticks;
 
 uint16_t ADCvalue;
 
-uint16_t inputsamples [6500];
+uint16_t inputsamples [5000];
 uint16_t i;
 uint32_t o;
 
@@ -51,10 +51,13 @@ int main(void)
 
 //	dacInit();
 
+	//while (i <= 1);
+
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
 		SPI3->DR = inputsamples[o];
 	}
+
 
 	while(1)
 	{

@@ -153,7 +153,7 @@ void codecI2SInit (void)
 	RCC ->PLLI2SCFGR = (pllr << 28) | (plln << 6);
 
 
-	//I2S_InitStructure.I2S_AudioFreq = 48000;
+	I2S_InitStructure.I2S_AudioFreq = 48000;
 	I2S_InitStructure.I2S_Standard = I2S_STANDARD_PHILLIPS;
 	I2S_InitStructure.I2S_DataFormat = I2S_DataFormat_16b;
 	I2S_InitStructure.I2S_CPOL = I2S_CPOL_Low;

@@ -27,7 +27,7 @@
 #include "GPIOPins.h"
 #include "main.h"
 
-extern uint16_t inputsamples [6500];
+extern uint16_t inputsamples [5000];
 extern uint16_t i;
 extern uint32_t o;
 extern const uint16_t AUDIO_SAMPLE[];
@@ -189,7 +189,7 @@ void ADC_IRQHandler(void)
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		i++;
-		if(i > 6499) i = 0;
+		if(i >= 5000) i = 1;
 	}
 
 
@@ -199,38 +199,34 @@ void SPI3_IRQHandler (void)
 {
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		if((SPI3->SR && I2S_FLAG_CHSIDE) == SET)
+		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
-			SPI3->DR = AUDIO_SAMPLE[o];
+			SPI3->DR = inputsamples[o];
+			GPIO_PinToggle(GPIOD, LED5_PIN);
+			o++;
 		}
 		else
 		{
-			SPI3->DR = AUDIO_SAMPLE[o];
+			SPI3->DR = inputsamples[o];
 			o++;
+
 		}
 
-		if(o > 500000) o = 0;
+		if(o >= 5000) o = 1;
 	}
 }
 
 void TIM4_IRQHandler(void)
 {
-	ticks ++;
 	if(TIM_GetITStatus(TIM4, TIM_IT_CC1) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM4, TIM_IT_CC1);
 
-		//ADC_SoftwareStartConv(ADC3);
-		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
-
-		//DAC->DHR12R1 = AUDIO_SAMPLE[o];
-		o++;
-		if(o > 500000) o = 0;
-
 		GPIO_PinToggle(GPIOD, LED6_PIN);
 
+		//ADC_SoftwareStartConv(ADC3);
+		ADC3->CR2 |= (uint32_t)ADC_CR2_SWSTART;
 	}
-	if(ticks > 1) ticks = 0;
 }
 
 /**

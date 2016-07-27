@@ -31,7 +31,7 @@ void TIM4_Config(void)
   prescalervalue = (uint16_t) ((SystemCoreClock ) / 84000000) - 1;
 
   /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 873;
+  TIM_TimeBaseStructure.TIM_Period = 436;//875
   TIM_TimeBaseStructure.TIM_Prescaler = prescalervalue;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
