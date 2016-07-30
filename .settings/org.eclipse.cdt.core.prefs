@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/fr.ac6.managedbuild.config.gnu.cross.exe.debug.677604803/PATH/delimiter=;
+environment/project/fr.ac6.managedbuild.config.gnu.cross.exe.debug.677604803/PATH/operation=replace
+environment/project/fr.ac6.managedbuild.config.gnu.cross.exe.debug.677604803/PATH/value=C\:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.arm-none.win32_1.7.0.201602121829\\tools\\compiler\\bin;C\:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.win32_1.3.0.201507241045\\tools\\make;C\:/Program Files/Java/jre1.8.0_91/bin/server;C\:/Program Files/Java/jre1.8.0_91/bin;C\:/Program Files/Java/jre1.8.0_91/lib/amd64;C\:\\ProgramData\\Oracle\\Java\\javapath;C\:\\Windows\\system32;;C\:\\Users\\Tristan\\Desktop
+environment/project/fr.ac6.managedbuild.config.gnu.cross.exe.debug.677604803/append=true
+environment/project/fr.ac6.managedbuild.config.gnu.cross.exe.debug.677604803/appendContributed=true
