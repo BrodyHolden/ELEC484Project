@@ -11,8 +11,6 @@
 #include "main.h"
 #include "stm32f4xx.h"
 
-extern uint8_t ticks;
-
 void TIM4_Config(void);
 
 #endif /* TIMER_H_ */

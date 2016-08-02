@@ -17,7 +17,6 @@
 RCC_ClocksTypeDef RCC_Clocks;
 
 uint8_t UserButtonPressed;
-uint8_t ticks;
 
 uint16_t ADCvalue;
 
@@ -28,7 +27,6 @@ uint32_t g_outputIndex;
 int main(void)
 {
 	UserButtonPressed = 0;
-	ticks = 0;
 	g_inputIndex = 0;
 	g_outputIndex = 0;
 
