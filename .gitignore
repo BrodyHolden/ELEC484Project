@@ -44,3 +44,6 @@
 .custom.cfg
 .settings/
 LinkerScript.ld
+
+# gedit backup files
+*~
