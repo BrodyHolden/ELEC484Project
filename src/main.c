@@ -21,7 +21,7 @@ uint8_t ticks;
 
 uint16_t ADCvalue;
 
-uint16_t inputsamples [INPUT_BUFFER_SIZE];
+uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
 uint16_t i;
 uint32_t o;
 
@@ -56,7 +56,7 @@ int main(void)
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		SPI3->DR = inputsamples[o];
+		SPI3->DR = g_inputsamples[o];
 	}
 
 

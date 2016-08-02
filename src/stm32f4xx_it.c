@@ -29,7 +29,7 @@
 
 #include "settings.h"
 
-extern uint16_t inputsamples [INPUT_BUFFER_SIZE];
+extern uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
 extern uint16_t i;
 extern uint32_t o;
 extern const uint16_t AUDIO_SAMPLE[];
@@ -187,7 +187,7 @@ void ADC_IRQHandler(void)
 {
 	if((ADC3->SR & ADC_FLAG_EOC) == ADC_FLAG_EOC)
 	{
-		inputsamples[i] = ADC_GetConversionValue(ADC3);
+		g_inputsamples[i] = ADC_GetConversionValue(ADC3);
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		i++;
@@ -203,13 +203,13 @@ void SPI3_IRQHandler (void)
 	{
 		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
-			SPI3->DR = inputsamples[o];
+			SPI3->DR = g_inputsamples[o];
 			GPIO_PinToggle(GPIOD, LED5_PIN);
 			o++;
 		}
 		else
 		{
-			SPI3->DR = inputsamples[o];
+			SPI3->DR = g_inputsamples[o];
 			o++;
 
 		}
