@@ -191,7 +191,7 @@ void ADC_IRQHandler(void)
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		g_inputIndex++;
-		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 1;
+		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 0;
 	}
 
 
@@ -214,7 +214,7 @@ void SPI3_IRQHandler (void)
 
 		}
 
-		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 1;
+		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
 	}
 }
 
