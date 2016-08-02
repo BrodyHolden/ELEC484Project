@@ -35,3 +35,12 @@
 *.dSYM/
 *.su
 /Debug/
+
+# OpenSTM32 System Workbench (aka Eclipse)
+/Debug/
+/Release/
+.project
+.cproject
+.custom.cfg
+.settings/
+LinkerScript.ld
