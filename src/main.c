@@ -12,6 +12,8 @@
 #include "stm32f4xx.h"
 #include "main.h"
 
+#include "settings.h"
+
 RCC_ClocksTypeDef RCC_Clocks;
 
 uint8_t UserButtonPressed;
@@ -19,7 +21,7 @@ uint8_t ticks;
 
 uint16_t ADCvalue;
 
-uint16_t inputsamples [5000];
+uint16_t inputsamples [INPUT_BUFFER_SIZE];
 uint16_t i;
 uint32_t o;
 

@@ -27,7 +27,9 @@
 #include "GPIOPins.h"
 #include "main.h"
 
-extern uint16_t inputsamples [5000];
+#include "settings.h"
+
+extern uint16_t inputsamples [INPUT_BUFFER_SIZE];
 extern uint16_t i;
 extern uint32_t o;
 extern const uint16_t AUDIO_SAMPLE[];
@@ -189,7 +191,7 @@ void ADC_IRQHandler(void)
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		i++;
-		if(i >= 5000) i = 1;
+		if(i >= INPUT_BUFFER_SIZE) i = 1;
 	}
 
 
@@ -212,7 +214,7 @@ void SPI3_IRQHandler (void)
 
 		}
 
-		if(o >= 5000) o = 1;
+		if(o >= INPUT_BUFFER_SIZE) o = 1;
 	}
 }
 
