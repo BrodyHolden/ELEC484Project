@@ -31,7 +31,7 @@
 
 extern uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
 extern uint16_t g_inputIndex;
-extern uint32_t o;
+extern uint32_t g_outputIndex;
 extern const uint16_t AUDIO_SAMPLE[];
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
@@ -203,18 +203,18 @@ void SPI3_IRQHandler (void)
 	{
 		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
-			SPI3->DR = g_inputsamples[o];
+			SPI3->DR = g_inputsamples[g_outputIndex];
 			GPIO_PinToggle(GPIOD, LED5_PIN);
-			o++;
+			g_outputIndex++;
 		}
 		else
 		{
-			SPI3->DR = g_inputsamples[o];
-			o++;
+			SPI3->DR = g_inputsamples[g_outputIndex];
+			g_outputIndex++;
 
 		}
 
-		if(o >= INPUT_BUFFER_SIZE) o = 1;
+		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 1;
 	}
 }
 

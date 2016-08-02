@@ -23,14 +23,14 @@ uint16_t ADCvalue;
 
 uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
 uint16_t g_inputIndex;
-uint32_t o;
+uint32_t g_outputIndex;
 
 int main(void)
 {
 	UserButtonPressed = 0;
 	ticks = 0;
 	g_inputIndex = 0;
-	o = 0;
+	g_outputIndex = 0;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -56,7 +56,7 @@ int main(void)
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		SPI3->DR = g_inputsamples[o];
+		SPI3->DR = g_inputsamples[g_outputIndex];
 	}
 
 
