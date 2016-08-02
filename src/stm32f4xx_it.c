@@ -30,7 +30,7 @@
 #include "settings.h"
 
 extern uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
-extern uint16_t i;
+extern uint16_t g_inputIndex;
 extern uint32_t o;
 extern const uint16_t AUDIO_SAMPLE[];
 
@@ -187,11 +187,11 @@ void ADC_IRQHandler(void)
 {
 	if((ADC3->SR & ADC_FLAG_EOC) == ADC_FLAG_EOC)
 	{
-		g_inputsamples[i] = ADC_GetConversionValue(ADC3);
+		g_inputsamples[g_inputIndex] = ADC_GetConversionValue(ADC3);
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
-		i++;
-		if(i >= INPUT_BUFFER_SIZE) i = 1;
+		g_inputIndex++;
+		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 1;
 	}
 
 

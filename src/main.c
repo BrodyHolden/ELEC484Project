@@ -22,14 +22,14 @@ uint8_t ticks;
 uint16_t ADCvalue;
 
 uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
-uint16_t i;
+uint16_t g_inputIndex;
 uint32_t o;
 
 int main(void)
 {
 	UserButtonPressed = 0;
 	ticks = 0;
-	i = 0;
+	g_inputIndex = 0;
 	o = 0;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
