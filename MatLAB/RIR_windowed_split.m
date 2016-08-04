@@ -1,7 +1,7 @@
-samples = [1,2880];
+samples = [1,3072];
 [y_R,Fs_R]=audioread('48k_RIR.wav', samples);  %AK: read in the Room impulse response
 
-N = 480; %AK:set the room window size to 480 to get 10ms of the RIR
+N = 512; %AK:set the room window size to 480 to get 10ms of the RIR
 
 hop = N/2;  
 
