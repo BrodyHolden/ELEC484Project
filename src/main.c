@@ -50,7 +50,7 @@ int main(void)
 
 //	dacInit();
 
-	//while (i <= 1);
+	while (g_inputIndex <= WINDOW_SIZE);
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
