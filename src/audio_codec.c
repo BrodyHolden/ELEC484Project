@@ -130,12 +130,14 @@ void codecGPIOInit (void)
 
 void codecI2SInit (void)
 {
+	// Both audio input and output are set at 48.08 K Hz
+
 	//	Audio44100HzSettings 271,2,6,0
 	//Audio48000HzSettings 258,3,3,1
-	int plln = 258;
+	int plln = 240;
 	int pllr = 3;
-	//int i2sdiv = 3;
-	//int i2sodd = 1;
+	int i2sdiv = 6;
+	int i2sodd = 1;
 
 	NVIC_InitTypeDef   NVIC_InitStructure;
 	I2S_InitTypeDef I2S_InitStructure;		//Struct for I2S init
@@ -162,7 +164,7 @@ void codecI2SInit (void)
 	I2S_Init(SPI3, &I2S_InitStructure);
 
 	// Configure I2S.
-//	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
+	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
 
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_SPI3);
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3);
