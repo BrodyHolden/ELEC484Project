@@ -134,8 +134,8 @@ void codecI2SInit (void)
 	//Audio48000HzSettings 258,3,3,1
 	int plln = 258;
 	int pllr = 3;
-	int i2sdiv = 3;
-	int i2sodd = 1;
+	//int i2sdiv = 3;
+	//int i2sodd = 1;
 
 	NVIC_InitTypeDef   NVIC_InitStructure;
 	I2S_InitTypeDef I2S_InitStructure;		//Struct for I2S init
