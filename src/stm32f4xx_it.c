@@ -31,7 +31,7 @@
 
 extern uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 extern uint16_t g_inputIndex;
-extern uint32_t g_outputIndex;
+extern uint16_t g_outputIndex;
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{

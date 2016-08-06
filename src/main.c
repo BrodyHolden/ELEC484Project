@@ -22,7 +22,7 @@ uint16_t ADCvalue;
 
 uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 uint16_t g_inputIndex;
-uint32_t g_outputIndex;
+uint16_t g_outputIndex;
 
 int main(void)
 {
