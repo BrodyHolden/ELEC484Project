@@ -73,9 +73,11 @@ int main(void)
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
 
-		float x[WINDOW_SIZE];
+		float x[FFT_SIZE];
 
 		memcpy(x, copyPtr, WINDOW_SIZE);
+		// Zero pad
+		memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
 		// TODO Perform reverb here.
 
