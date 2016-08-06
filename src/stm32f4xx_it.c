@@ -190,7 +190,7 @@ void ADC_IRQHandler(void)
 		g_inputsamples[g_inputIndex] = ADC_GetConversionValue(ADC3);
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
-		g_inputIndex++;
+		g_inputIndex += 2;
 		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 0;
 	}
 
@@ -205,12 +205,12 @@ void SPI3_IRQHandler (void)
 		{
 			SPI3->DR = g_inputsamples[g_outputIndex];
 			GPIO_PinToggle(GPIOD, LED5_PIN);
-			g_outputIndex++;
+			g_outputIndex += 2;
 		}
 		else
 		{
 			SPI3->DR = g_inputsamples[g_outputIndex];
-			g_outputIndex++;
+			g_outputIndex += 2;
 
 		}
 
