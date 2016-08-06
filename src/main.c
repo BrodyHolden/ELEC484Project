@@ -14,6 +14,7 @@
 
 #include "settings.h"
 #include <stdbool.h>
+#include <string.h>
 
 RCC_ClocksTypeDef RCC_Clocks;
 
@@ -30,10 +31,13 @@ bool g_hasNewWindow;
 int main(void)
 {
 	UserButtonPressed = 0;
-	g_inputIndex = 0;
-	g_outputIndex = INPUT_BUFFER_SIZE - READ_DELAY;
+	g_inputIndex = WINDOW_SIZE * 2;
+	g_outputIndex = 0;
 	g_samplesInNewWindow = 0;
 	g_hasNewWindow = false;
+
+	const uint16_t* lastElementOfBufferPtr = g_inputSamples + INPUT_BUFFER_SIZE - 1;
+	uint16_t* copyPtr = g_inputSamples + WINDOW_SIZE;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -55,7 +59,7 @@ int main(void)
 
 //	dacInit();
 
-	while (g_inputIndex <= READ_DELAY);
+	while(g_inputIndex <= (WINDOW_SIZE * 2));
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
@@ -69,7 +73,18 @@ int main(void)
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
 
-		float buffer[WINDOW_SIZE];
+		float x[WINDOW_SIZE];
+
+		memcpy(x, copyPtr, WINDOW_SIZE);
+
+		// TODO Perform reverb here.
+
+		memcpy(copyPtr, x, WINDOW_SIZE);
+
+		copyPtr += WINDOW_SIZE;
+		if (copyPtr > lastElementOfBufferPtr) {
+			copyPtr = g_inputSamples;
+		}
 
 	}
 }
