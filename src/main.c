@@ -13,6 +13,7 @@
 #include "main.h"
 
 #include "settings.h"
+#include <stdbool.h>
 
 RCC_ClocksTypeDef RCC_Clocks;
 
@@ -23,12 +24,16 @@ uint16_t ADCvalue;
 uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 uint16_t g_inputIndex;
 uint16_t g_outputIndex;
+uint16_t g_samplesInNewWindow;
+bool g_hasNewWindow;
 
 int main(void)
 {
 	UserButtonPressed = 0;
 	g_inputIndex = 0;
 	g_outputIndex = 0;
+	g_samplesInNewWindow = 0;
+	g_hasNewWindow = false;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -60,6 +65,12 @@ int main(void)
 
 	while(1)
 	{
+		// Spin lock until a windows worth of input is collected.
+		while (! g_hasNewWindow);
+		g_hasNewWindow = false;
+
+		float buffer[WINDOW_SIZE];
+
 	}
 }
 

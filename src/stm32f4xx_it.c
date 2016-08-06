@@ -27,11 +27,15 @@
 #include "GPIOPins.h"
 #include "main.h"
 
+#include <stdbool.h>
+
 #include "settings.h"
 
 extern uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 extern uint16_t g_inputIndex;
 extern uint16_t g_outputIndex;
+extern uint16_t g_samplesInNewWindow;
+extern bool g_hasNewWindow;
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{
@@ -191,6 +195,12 @@ void ADC_IRQHandler(void)
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
 		g_inputIndex += 2;
 		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 0;
+
+		g_samplesInNewWindow++;
+		if (g_samplesInNewWindow >= REAL_SAMPLES_PER_WINDOW) {
+			g_samplesInNewWindow = 0;
+			g_hasNewWindow = true;
+		}
 	}
 
 
