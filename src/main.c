@@ -31,7 +31,7 @@ int main(void)
 {
 	UserButtonPressed = 0;
 	g_inputIndex = 0;
-	g_outputIndex = 0;
+	g_outputIndex = INPUT_BUFFER_SIZE - READ_DELAY;
 	g_samplesInNewWindow = 0;
 	g_hasNewWindow = false;
 
@@ -55,13 +55,12 @@ int main(void)
 
 //	dacInit();
 
-	while (g_inputIndex <= WINDOW_SIZE);
+	while (g_inputIndex <= READ_DELAY);
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
 		SPI3->DR = g_inputSamples[g_outputIndex];
 	}
-
 
 	while(1)
 	{

@@ -17,6 +17,8 @@
 // Real values in even position. Complex values in odd position.
 #define WINDOW_SIZE (REAL_SAMPLES_PER_WINDOW * 2)
 
+#define READ_DELAY (WINDOW_SIZE * 2)
+
 #define INPUT_BUFFER_SIZE (WINDOW_SIZE * 8)
 
 static_assert(WINDOW_SIZE % 2 == 0, "WINDOW_SIZE must be even.");
