@@ -20,7 +20,7 @@ uint8_t UserButtonPressed;
 
 uint16_t ADCvalue;
 
-uint16_t g_inputsamples [INPUT_BUFFER_SIZE];
+uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 uint16_t g_inputIndex;
 uint32_t g_outputIndex;
 
@@ -54,7 +54,7 @@ int main(void)
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		SPI3->DR = g_inputsamples[g_outputIndex];
+		SPI3->DR = g_inputSamples[g_outputIndex];
 	}
 
 
