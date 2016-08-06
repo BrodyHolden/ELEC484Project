@@ -32,7 +32,6 @@
 extern uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 extern uint16_t g_inputIndex;
 extern uint32_t g_outputIndex;
-extern const uint16_t AUDIO_SAMPLE[];
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{
