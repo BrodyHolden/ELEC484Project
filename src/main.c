@@ -64,6 +64,7 @@ int main(void)
 
 	while(1)
 	{
+		GPIO_PinToggle(GPIOD, LED4_PIN);
 		// Spin lock until a windows worth of input is collected.
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
