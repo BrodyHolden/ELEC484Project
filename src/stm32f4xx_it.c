@@ -210,17 +210,11 @@ void SPI3_IRQHandler (void)
 {
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
+		SPI3->DR = g_inputSamples[g_outputIndex];
+		g_outputIndex += 2;
 		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
-			SPI3->DR = g_inputSamples[g_outputIndex];
 			GPIO_PinToggle(GPIOD, LED5_PIN);
-			g_outputIndex += 2;
-		}
-		else
-		{
-			SPI3->DR = g_inputSamples[g_outputIndex];
-			g_outputIndex += 2;
-
 		}
 
 		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
