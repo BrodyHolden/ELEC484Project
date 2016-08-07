@@ -73,7 +73,7 @@ int main(void)
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
 
-		float x[FFT_SIZE];
+		uint16_t x[FFT_SIZE];
 
 		memcpy(x, copyPtr, WINDOW_SIZE);
 		// Zero pad
