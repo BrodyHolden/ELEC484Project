@@ -16,6 +16,13 @@
 #include <stdbool.h>
 #include <string.h>
 
+// CMSIS_DSP related includes
+#define ARM_MATH_CM4
+#define __FPU_PRESENT 1
+#include "arm_math.h"
+#include "arm_const_structs.h"
+
+
 RCC_ClocksTypeDef RCC_Clocks;
 
 uint8_t UserButtonPressed;
@@ -88,6 +95,21 @@ int main(void)
 			copyPtr = g_inputSamples;
 		}
 
+
+		// CMSIS DSP related functions.
+		// This is all should compile but doesn't actually do anything useful.
+		// It's here to test getting the project to build against CMSIS DSP.
+		float x_f32[FFT_SIZE];
+		float h_f32[FFT_SIZE];
+		float y_f32[FFT_SIZE];
+		arm_cfft_f32(&arm_cfft_sR_f32_len1024, x_f32, 0, 0);
+		arm_cmplx_mult_cmplx_f32(x_f32, h_f32, y_f32, FFT_SIZE);
+
+		int16_t x_q15[FFT_SIZE];
+		int16_t h_q15[FFT_SIZE];
+		int16_t y_q15[FFT_SIZE];
+		arm_cfft_q15(&arm_cfft_sR_q15_len1024, x_q15, 0, 0);
+		arm_cmplx_mult_cmplx_q15(x_q15, h_q15, y_q15, FFT_SIZE);
 	}
 }
 
