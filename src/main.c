@@ -28,8 +28,27 @@ uint16_t g_outputIndex;
 uint16_t g_samplesInNewWindow;
 bool g_hasNewWindow;
 
+
+void enableFloatingPointUnit(void)
+{
+	// Enable Floating Point Unit
+	// From page 256 of "STM32F3, STM32F4 and STM32L4 Series Cortex(R)-M4 programming manual"
+	// http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
+	__asm__ (
+		"LDR.W	R0, =0xE000ED88\n\t"
+		"LDR	R1, [R0]\n\t"
+		"ORR	R1, R1, #(0xF << 20)\n\t"
+		"STR	R1, [R0]\n\t"
+		"DSB\n\t"
+		"ISB"
+	);
+}
+
+
 int main(void)
 {
+	enableFloatingPointUnit();
+
 	UserButtonPressed = 0;
 	g_inputIndex = WINDOW_SIZE * 2;
 	g_outputIndex = 0;
