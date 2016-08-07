@@ -34,7 +34,7 @@ void codecInit (void)
 	WriteRegister(0x04, 0xaf);			// HP always on, Speakers always off
 	WriteRegister(0x05, 0x81);			// Clock config: Auto detect
 	WriteRegister(0x06, 0x04);			// Set Slave mode and audio standard
-	WriteRegister(0x0d, 0x60);			// Set headphone volume
+	WriteRegister(0x0d, 0xE0);			// Set headphone volume
 	WriteRegister(0x02, 0x9e);			// Activate the chip
 
 }
