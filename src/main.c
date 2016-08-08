@@ -47,7 +47,7 @@ void enableFloatingPointUnit(void)
 
 int main(void)
 {
-	enableFloatingPointUnit();
+	//enableFloatingPointUnit();
 
 	UserButtonPressed = 0;
 	g_inputIndex = WINDOW_SIZE * 2;
