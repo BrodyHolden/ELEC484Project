@@ -17,16 +17,16 @@
 // Real values in even position. Complex values in odd position.
 #define WINDOW_SIZE (REAL_SAMPLES_PER_WINDOW * 2)
 
-
-// If windows are length N, then the FFT values are 2N, since they need to be padded twice as long by zeros.
-// This is because we are using FFTs to simulate convolution and convolution with two inputs of length M
-// produces output of length 2M.
-#define REAL_SAMPLES_PER_FFT (REAL_SAMPLES_PER_WINDOW * 2)
-#define FFT_SIZE (REAL_SAMPLES_PER_FFT * 2)
+#define FFT_SIZE WINDOW_SIZE
 
 #define INPUT_BUFFER_SIZE (WINDOW_SIZE * 8)
 
+#define OFFSET_BETWEEN_INPUT_AND_OUTPUT_INDICES (WINDOW_SIZE * 4)
+
+#define OFFSET_BETWEEN_OUTPUT_AND_COPY_PTR (WINDOW_SIZE * 3)
+
 static_assert(WINDOW_SIZE % 2 == 0, "WINDOW_SIZE must be even.");
+static_assert(FFT_SIZE % 2 == 0, "FFT_SIZE must be even.");
 static_assert(INPUT_BUFFER_SIZE % 2 == 0, "INPUT_BUFFER_SIZE must be even.");
 static_assert(INPUT_BUFFER_SIZE < UINT16_MAX, "Buffer is too large to for uint16_t to index it.");
 

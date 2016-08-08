@@ -32,10 +32,10 @@
 #include "settings.h"
 
 extern uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
-extern uint16_t g_inputIndex;
-extern uint16_t g_outputIndex;
+extern uint16_t g_index;
 extern uint16_t g_samplesInNewWindow;
 extern bool g_hasNewWindow;
+
 
 /** @addtogroup STM32F4_Discovery_Peripheral_Examples
   * @{
@@ -190,11 +190,18 @@ void ADC_IRQHandler(void)
 {
 	if((ADC3->SR & ADC_FLAG_EOC) == ADC_FLAG_EOC)
 	{
-		g_inputSamples[g_inputIndex] = ADC_GetConversionValue(ADC3);
+		uint16_t index = g_index + OFFSET_BETWEEN_INPUT_AND_OUTPUT_INDICES;
+		if (index >= INPUT_BUFFER_SIZE) {
+			index -= INPUT_BUFFER_SIZE;
+		}
+
+		g_inputSamples[index] = ADC_GetConversionValue(ADC3);
+		g_index += 2;
 
 		ADC_ClearITPendingBit(ADC3, ADC_FLAG_EOC);
-		g_inputIndex += 2;
-		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 0;
+		if (g_index >= INPUT_BUFFER_SIZE) {
+			g_index = 0;
+		}
 
 		g_samplesInNewWindow++;
 		if (g_samplesInNewWindow >= REAL_SAMPLES_PER_WINDOW) {
@@ -210,14 +217,12 @@ void SPI3_IRQHandler (void)
 {
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		SPI3->DR = g_inputSamples[g_outputIndex];
-		g_outputIndex += 2;
+		SPI3->DR = g_inputSamples[g_index];
+
 		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
 			GPIO_PinToggle(GPIOD, LED5_PIN);
 		}
-
-		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
 	}
 }
 

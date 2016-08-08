@@ -23,8 +23,7 @@ uint8_t UserButtonPressed;
 uint16_t ADCvalue;
 
 uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
-uint16_t g_inputIndex;
-uint16_t g_outputIndex;
+uint16_t g_index;
 uint16_t g_samplesInNewWindow;
 bool g_hasNewWindow;
 
@@ -50,13 +49,12 @@ int main(void)
 	enableFloatingPointUnit();
 
 	UserButtonPressed = 0;
-	g_inputIndex = WINDOW_SIZE * 2;
-	g_outputIndex = 0;
+	g_index = 0;
 	g_samplesInNewWindow = 0;
 	g_hasNewWindow = false;
 
 	const uint16_t* lastElementOfBufferPtr = g_inputSamples + INPUT_BUFFER_SIZE - 1;
-	uint16_t* copyPtr = g_inputSamples + WINDOW_SIZE;
+	uint16_t* copyPtr = g_inputSamples + OFFSET_BETWEEN_OUTPUT_AND_COPY_PTR;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -78,11 +76,11 @@ int main(void)
 
 //	dacInit();
 
-	while(g_inputIndex <= (WINDOW_SIZE * 2));
+	//while(g_inputIndex <= (WINDOW_SIZE * 2));
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
-		SPI3->DR = g_inputSamples[g_outputIndex];
+		SPI3->DR = g_inputSamples[g_index];
 	}
 
 	while(1)
@@ -95,14 +93,13 @@ int main(void)
 		uint16_t x[FFT_SIZE];
 
 		memcpy(x, copyPtr, WINDOW_SIZE);
-		// Zero pad
-		memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
 		// TODO Perform reverb here.
+		//memset(x, 32768, FFT_SIZE);
 
 		memcpy(copyPtr, x, WINDOW_SIZE);
 
-		copyPtr += WINDOW_SIZE;
+		copyPtr += (WINDOW_SIZE * 3);
 		if (copyPtr > lastElementOfBufferPtr) {
 			copyPtr = g_inputSamples;
 		}
