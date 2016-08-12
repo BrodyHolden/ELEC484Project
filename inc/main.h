@@ -24,6 +24,4 @@
 #include "audio_codec.h"
 #include "dac.h"
 
-uint8_t UserButtonPressed;
-
 #endif /* MAIN_H_ */

@@ -5,6 +5,8 @@
  *      Author: user
  */
 
+// These are the reverb settings.
+
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 

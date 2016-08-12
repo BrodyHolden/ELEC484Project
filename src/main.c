@@ -25,10 +25,9 @@
 
 RCC_ClocksTypeDef RCC_Clocks;
 
-uint8_t UserButtonPressed;
-
 uint16_t ADCvalue;
 
+bool g_userButtonPressed;
 uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 uint16_t g_inputIndex;
 uint16_t g_outputIndex;
@@ -59,7 +58,7 @@ int main(void)
 {
 	enableFloatingPointUnit();
 
-	UserButtonPressed = 0;
+	g_userButtonPressed = false;
 	g_outputIndex = 0;
 	g_inputIndex = OFFSET_BETWEEN_INPUT_AND_OUTPUT_INDICES;
 	g_samplesInNewWindow = 0;
@@ -122,24 +121,28 @@ int main(void)
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
 
-		memcpy(x          , copyPtr1, HALF_WINDOW_SIZE);
-		memcpy(middle_of_x, copyPtr2, HALF_WINDOW_SIZE);
-		// Zero pad
-		//memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
+		if (g_userButtonPressed == true) {
 
-		// TODO Perform reverb here.
-		arm_cfft_f32(fftOptions, x, 0, fftBitReversal);
+			memcpy(x          , copyPtr1, HALF_WINDOW_SIZE);
+			memcpy(middle_of_x, copyPtr2, HALF_WINDOW_SIZE);
+			// Zero pad
+			//memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
-		arm_cmplx_mult_cmplx_f32(x, impulseResponse_0, y, REAL_SAMPLES_PER_WINDOW);
+			// TODO Perform reverb here.
+			arm_cfft_f32(fftOptions, x, 0, fftBitReversal);
 
-//		for (int i = 0; i < FFT_SIZE; i++) {
-//			y[i] = y[i] + prev_y[i];
-//		}
+			arm_cmplx_mult_cmplx_f32(x, impulseResponse_0, y, REAL_SAMPLES_PER_WINDOW);
 
-		arm_cfft_f32(fftOptions, y, 1, fftBitReversal);
+	//		for (int i = 0; i < FFT_SIZE; i++) {
+	//			y[i] = y[i] + prev_y[i];
+	//		}
 
-		memcpy(copyPtr1, y          , HALF_WINDOW_SIZE);
-		memcpy(copyPtr2, middle_of_y, HALF_WINDOW_SIZE);
+			arm_cfft_f32(fftOptions, y, 1, fftBitReversal);
+
+			memcpy(copyPtr1, y          , HALF_WINDOW_SIZE);
+			memcpy(copyPtr2, middle_of_y, HALF_WINDOW_SIZE);
+
+		}
 
 		copyPtr1 += HOP_SIZE;
 		if (copyPtr1 > lastElementOfBufferPtr) {

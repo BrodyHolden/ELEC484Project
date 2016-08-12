@@ -31,6 +31,7 @@
 
 #include "settings.h"
 
+extern uint8_t g_userButtonPressed;
 extern uint16_t g_inputSamples [INPUT_BUFFER_SIZE];
 extern uint16_t g_inputIndex;
 extern uint16_t g_outputIndex;
@@ -180,7 +181,12 @@ void EXTI0_IRQHandler(void)
 	{
 		GPIO_PinToggle(GPIOD, LED5_PIN);
 
-		if (UserButtonPressed > 3) UserButtonPressed = 0;
+		if (g_userButtonPressed == false) {
+			g_userButtonPressed = true;
+		} else {
+			g_userButtonPressed = false;
+		}
+
 		/* Clear the EXTI line pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
