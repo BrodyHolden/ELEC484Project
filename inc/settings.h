@@ -21,11 +21,18 @@
 
 #define HALF_WINDOW_SIZE (WINDOW_SIZE / 2)
 
+
+// #define HOP_SIZE HALF_REAL_SAMPLES_PER_WINDOW
+#define HOP_SIZE REAL_SAMPLES_PER_WINDOW
+
+
 // If windows are length N, then the FFT values are 2N, since they need to be padded twice as long by zeros.
 // This is because we are using FFTs to simulate convolution and convolution with two inputs of length M
 // produces output of length 2M.
-#define REAL_SAMPLES_PER_FFT (REAL_SAMPLES_PER_WINDOW * 2)
-#define FFT_SIZE (REAL_SAMPLES_PER_FFT * 2)
+//#define REAL_SAMPLES_PER_FFT (REAL_SAMPLES_PER_WINDOW * 2)
+//#define FFT_SIZE (REAL_SAMPLES_PER_FFT * 2)
+
+#define FFT_SIZE (WINDOW_SIZE)
 
 #define INPUT_BUFFER_SIZE (WINDOW_SIZE * 8)
 

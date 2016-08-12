@@ -16,6 +16,13 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define ARM_MATH_CM4
+#define __FPU_PRESENT 1
+#include "arm_math.h"
+#include "arm_const_structs.h"
+
+#include "impulse_response_arrays.h"
+
 RCC_ClocksTypeDef RCC_Clocks;
 
 uint8_t UserButtonPressed;
@@ -45,9 +52,12 @@ void enableFloatingPointUnit(void)
 }
 
 
+const uint8_t fftBitReversal = 1;
+
+
 int main(void)
 {
-	//enableFloatingPointUnit();
+	enableFloatingPointUnit();
 
 	UserButtonPressed = 0;
 	g_outputIndex = 0;
@@ -58,6 +68,25 @@ int main(void)
 	const uint16_t* lastElementOfBufferPtr = g_inputSamples + INPUT_BUFFER_SIZE - 1;
 	uint16_t* copyPtr1 = g_inputSamples + OFFSET_BETWEEN_OUTPUT_AND_COPY_PTR;
 	uint16_t* copyPtr2 = copyPtr1 + HALF_WINDOW_SIZE;
+
+	const arm_cfft_instance_f32* fftOptions = &arm_cfft_sR_f32_len512;
+
+	float x[FFT_SIZE];
+	float* const middle_of_x = x + HALF_WINDOW_SIZE;
+
+	float prev_y[FFT_SIZE];
+	float prev_x[FFT_SIZE];
+
+	float y[FFT_SIZE];
+	float* const middle_of_y = y + HALF_WINDOW_SIZE;
+
+	const int fill = 0;
+	memset(x, fill, FFT_SIZE);
+	memset(prev_y, fill, FFT_SIZE);
+	memset(prev_x, fill, FFT_SIZE);
+	memset(y, fill, FFT_SIZE);
+
+	memset(g_inputSamples, fill, INPUT_BUFFER_SIZE);
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -88,9 +117,6 @@ int main(void)
 
 	while(1)
 	{
-		uint16_t x[FFT_SIZE];
-		uint16_t* const middle_of_x = x + HALF_WINDOW_SIZE;
-
 		GPIO_PinToggle(GPIOD, LED4_PIN);
 		// Spin lock until a windows worth of input is collected.
 		while (! g_hasNewWindow);
@@ -102,16 +128,25 @@ int main(void)
 		//memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
 		// TODO Perform reverb here.
+		arm_cfft_f32(fftOptions, x, 0, fftBitReversal);
 
-		memcpy(copyPtr1, x          , HALF_WINDOW_SIZE);
-		memcpy(copyPtr2, middle_of_x, HALF_WINDOW_SIZE);
+		arm_cmplx_mult_cmplx_f32(x, impulseResponse_0, y, REAL_SAMPLES_PER_WINDOW);
 
-		copyPtr1 += HALF_WINDOW_SIZE;
+//		for (int i = 0; i < FFT_SIZE; i++) {
+//			y[i] = y[i] + prev_y[i];
+//		}
+
+		arm_cfft_f32(fftOptions, y, 1, fftBitReversal);
+
+		memcpy(copyPtr1, y          , HALF_WINDOW_SIZE);
+		memcpy(copyPtr2, middle_of_y, HALF_WINDOW_SIZE);
+
+		copyPtr1 += HOP_SIZE;
 		if (copyPtr1 > lastElementOfBufferPtr) {
 			copyPtr1 = g_inputSamples;
 		}
 
-		copyPtr2 += HALF_WINDOW_SIZE;
+		copyPtr2 += HOP_SIZE;
 		if (copyPtr2 > lastElementOfBufferPtr) {
 			copyPtr2 = g_inputSamples;
 		}

@@ -200,7 +200,7 @@ void ADC_IRQHandler(void)
 		if (g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
 
 		g_samplesInNewWindow++;
-		if (g_samplesInNewWindow >= HALF_REAL_SAMPLES_PER_WINDOW) {
+		if (g_samplesInNewWindow >= HOP_SIZE) {
 			g_samplesInNewWindow = 0;
 			g_hasNewWindow = true;
 		}
