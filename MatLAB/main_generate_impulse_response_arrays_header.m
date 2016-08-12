@@ -1,10 +1,12 @@
 % This generates a C header file containing many arrays representing the
 % windowed Room Impulse Response.
 
-% TODO Make into a function
-RIR_windowed_split; % Creates 'out' and 'N' in the workspace
+clear all;
+close all;
 
+% Impulse response in floats with real and imaginary values interlaced.
+[out, Fs, N] = RIR_windowed_split();
 windows = separate_windows_into_array(out, N);
-filename = generate_impulse_response_arrays_header(windows);
+filename = generate_impulse_response_arrays_header_float_real_imag(windows);
 
 fprintf('Generated a C header file named %s with impulse response arrays\n', filename);

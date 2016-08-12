@@ -1,4 +1,4 @@
-function [filename] = generate_impulse_response_arrays_header(windows)
+function [filename] = generate_impulse_response_arrays_header_float_real_imag(windows)
 % Input parameter windows must be a 'cell' that contains arrays.
 
     filename = 'impulse_response_arrays.h';

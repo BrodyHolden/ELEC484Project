@@ -1,5 +1,8 @@
 % This is our initial implementation of reverb in matlab.
 
+clear all;
+close all;
+
 [y_T,Fs_T]=audioread('Two_Voices_1.wav'); %AK: read in the guitar file
 [y_R,Fs_R]=audioread('60ms_church_44100.wav');  %AK: read in the Room impulse response
 
