@@ -26,7 +26,7 @@ function [filename] = generate_impulse_response_arrays_header_float_real_imag(wi
         im = imag(window);
         sz = size(window);
         
-        format = 'const float impulseResponse_%d[%d] = {\n';
+        format = 'float impulseResponse_%d[%d] = {\n';
 
         fprintf(fileID, format, winIndex - 1, sz(1) * 2);
 
