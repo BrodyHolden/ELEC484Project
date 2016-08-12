@@ -50,13 +50,14 @@ int main(void)
 	//enableFloatingPointUnit();
 
 	UserButtonPressed = 0;
-	g_inputIndex = WINDOW_SIZE * 2;
 	g_outputIndex = 0;
+	g_inputIndex = OFFSET_BETWEEN_INPUT_AND_OUTPUT_INDICES;
 	g_samplesInNewWindow = 0;
 	g_hasNewWindow = false;
 
 	const uint16_t* lastElementOfBufferPtr = g_inputSamples + INPUT_BUFFER_SIZE - 1;
-	uint16_t* copyPtr = g_inputSamples + WINDOW_SIZE;
+	uint16_t* copyPtr1 = g_inputSamples + OFFSET_BETWEEN_OUTPUT_AND_COPY_PTR;
+	uint16_t* copyPtr2 = copyPtr1 + HALF_WINDOW_SIZE;
 
 	OutputPortPinInit(GPIOD, LED3_PIN, LED_GPIO_CLK);
 	OutputPortPinInit(GPIOD, LED4_PIN, LED_GPIO_CLK);
@@ -78,7 +79,7 @@ int main(void)
 
 //	dacInit();
 
-	while(g_inputIndex <= (WINDOW_SIZE * 2));
+	//while(g_inputIndex <= (WINDOW_SIZE * 2));
 
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
@@ -87,24 +88,32 @@ int main(void)
 
 	while(1)
 	{
+		uint16_t x[FFT_SIZE];
+		uint16_t* const middle_of_x = x + HALF_WINDOW_SIZE;
+
 		GPIO_PinToggle(GPIOD, LED4_PIN);
 		// Spin lock until a windows worth of input is collected.
 		while (! g_hasNewWindow);
 		g_hasNewWindow = false;
 
-		uint16_t x[FFT_SIZE];
-
-		memcpy(x, copyPtr, WINDOW_SIZE);
+		memcpy(x          , copyPtr1, HALF_WINDOW_SIZE);
+		memcpy(middle_of_x, copyPtr2, HALF_WINDOW_SIZE);
 		// Zero pad
-		memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
+		//memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
 		// TODO Perform reverb here.
 
-		memcpy(copyPtr, x, WINDOW_SIZE);
+		memcpy(copyPtr1, x          , HALF_WINDOW_SIZE);
+		memcpy(copyPtr2, middle_of_x, HALF_WINDOW_SIZE);
 
-		copyPtr += WINDOW_SIZE;
-		if (copyPtr > lastElementOfBufferPtr) {
-			copyPtr = g_inputSamples;
+		copyPtr1 += HALF_WINDOW_SIZE;
+		if (copyPtr1 > lastElementOfBufferPtr) {
+			copyPtr1 = g_inputSamples;
+		}
+
+		copyPtr2 += HALF_WINDOW_SIZE;
+		if (copyPtr2 > lastElementOfBufferPtr) {
+			copyPtr2 = g_inputSamples;
 		}
 
 	}

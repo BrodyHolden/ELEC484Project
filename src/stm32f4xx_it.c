@@ -196,8 +196,11 @@ void ADC_IRQHandler(void)
 		g_inputIndex += 2;
 		if(g_inputIndex >= INPUT_BUFFER_SIZE) g_inputIndex = 0;
 
+		g_outputIndex += 2;
+		if (g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
+
 		g_samplesInNewWindow++;
-		if (g_samplesInNewWindow >= REAL_SAMPLES_PER_WINDOW) {
+		if (g_samplesInNewWindow >= HALF_REAL_SAMPLES_PER_WINDOW) {
 			g_samplesInNewWindow = 0;
 			g_hasNewWindow = true;
 		}
@@ -211,13 +214,13 @@ void SPI3_IRQHandler (void)
 	if((SPI3->SR && SPI_I2S_FLAG_TXE) == SET)
 	{
 		SPI3->DR = g_inputSamples[g_outputIndex];
-		g_outputIndex += 2;
+		//g_outputIndex += 2;
 		if((I2S3ext->SR && I2S_FLAG_CHSIDE) == SET)
 		{
 			GPIO_PinToggle(GPIOD, LED5_PIN);
 		}
 
-		if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
+		//if(g_outputIndex >= INPUT_BUFFER_SIZE) g_outputIndex = 0;
 	}
 }
 
