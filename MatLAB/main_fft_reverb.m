@@ -1,6 +1,6 @@
-% function out = fft_reverb(y_T,y_R)
+% This is our initial implementation of reverb in matlab.
 
-[y_T,Fs_T]=audioread('Two Voices_1.wav'); %AK: read in the guitar file
+[y_T,Fs_T]=audioread('Two_Voices_1.wav'); %AK: read in the guitar file
 [y_R,Fs_R]=audioread('60ms_church_44100.wav');  %AK: read in the Room impulse response
 
 N = 2646; %AK:set the room window size to 2646 samples, the size of the  60ms room impulse response, change this to 2880 when working with a 48000Hz input
@@ -53,3 +53,6 @@ i = i+1;
 
     end
 end
+
+audiowrite('Two_Voices_1_reverb.wav', out, 44100);
+sound(out, 44100);
