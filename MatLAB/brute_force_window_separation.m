@@ -1,3 +1,6 @@
+% Experimental file for splitting array of windows that are end to end
+% into individual windows.
+
 window_1 = out(1:N);
 
 window_1_real = real(window_1);

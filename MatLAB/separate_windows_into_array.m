@@ -1,5 +1,12 @@
 function [windows] = separate_windows_into_array(out, N)
-    
+% SEPARATE_WINDOWS_INTO_ARRAY Separate windows that are end to end
+% into a cell of the windows.
+% Input parameters:
+%   out: The array of windows end to end
+%   N: The window size;
+% Output parameters:
+%   windows: Cell of separated windows.
+
     window_1 = out(1:N);
     window_2 = out(1*N+1:N*2);
     window_3 = out(2*N+1:N*3);

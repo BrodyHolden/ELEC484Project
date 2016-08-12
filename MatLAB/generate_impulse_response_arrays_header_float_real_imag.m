@@ -1,5 +1,11 @@
 function [filename] = generate_impulse_response_arrays_header_float_real_imag(windows)
-% Input parameter windows must be a 'cell' that contains arrays.
+% GENERATE_IMPULSE_RESPINSE_ARRAYS_HEADER_FLOAT_REAL_IMAG()
+% Output a C header file containing floats of real and imaginary impulse
+% response.
+% Input parameters:
+%   windows: Cell of arrays of complex numbers
+% Output parameters:
+%   filename: Name of generated file.
 
     filename = 'impulse_response_arrays.h';
 

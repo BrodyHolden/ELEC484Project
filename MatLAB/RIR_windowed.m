@@ -1,7 +1,15 @@
-function [out, Fs_R, N] = RIR_windowed()
+function [out, Fs_R, N] = RIR_windowed(filename)
+% RIR_windowed() Split Room Impulse Response by hanning windows
+% returned as windows one after another in an array.
+% Input parameters:
+%   filename: Name of Room Impulse Response file.
+% Output parameters:
+%   out: Array of windows end to end
+%   Fs_R: Sample rate in Hertz
+%   N: Size of window
 
     samples = [1,2880];
-    [y_R,Fs_R]=audioread('48k_RIR.wav', samples);  %AK: read in the Room impulse response
+    [y_R,Fs_R]=audioread(filename, samples);  %AK: read in the Room impulse response
 
     N = 480; %AK:set the room window size to 480 to get 10ms of the RIR
 
