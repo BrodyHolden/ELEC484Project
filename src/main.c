@@ -126,22 +126,22 @@ int main(void)
 			memcpy(x          , copyPtr1, HALF_WINDOW_SIZE);
 			memcpy(middle_of_x, copyPtr2, HALF_WINDOW_SIZE);
 			// Zero pad
-			//memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
+			memset(x + WINDOW_SIZE, 0, WINDOW_SIZE);
 
 			// TODO Perform reverb here.
 			arm_cfft_f32(fftOptions, x, 0, fftBitReversal);
 
 			arm_cmplx_mult_cmplx_f32(x, impulseResponse_0, y, REAL_SAMPLES_PER_WINDOW);
 
-	//		for (int i = 0; i < FFT_SIZE; i++) {
-	//			y[i] = y[i] + prev_y[i];
-	//		}
+			for (int i = 0; i < FFT_SIZE; i++) {
+				y[i] = y[i] + prev_y[i];
+			}
 
 			arm_cfft_f32(fftOptions, y, 1, fftBitReversal);
 
 			memcpy(copyPtr1, y          , HALF_WINDOW_SIZE);
 			memcpy(copyPtr2, middle_of_y, HALF_WINDOW_SIZE);
-
+			memcpy(prev_y, y + WINDOW_SIZE, WINDOW_SIZE);
 		}
 
 		copyPtr1 += HOP_SIZE;
